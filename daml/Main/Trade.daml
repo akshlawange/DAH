@@ -1,0 +1,33 @@
+daml 1.0
+
+module Main.Trade where
+
+import Main.Cash
+import Main.Equity
+
+template Trade
+  with
+    buyer: Party
+    seller:Party
+    quantity:Integer
+    symbol:Text
+    tradePrice:Decimal
+    consideration:Decimal
+    cashCid:ContractId Cash
+
+  where
+    signatory buyer
+
+    controller seller can
+      Accept with equityCid: ContractId Equity
+        returning {transferredCash: ContractId Cash; transferredEquity: ContractId Equity}
+        to do 
+          cash <- fetch cashCid
+          equity <- fetch equityCid
+          assert (cash.amount == consideration && consideration == tradePrice * fromInteger quantity)
+          assert (equity.symbol == symbol && equity.quantity == quantity)
+          assert (cash.cashOwner == buyer && equity.owner == seller)
+
+          transferredCash <- buyer does exercise cashCid Transfer with newCashOwner = seller
+          transferredEquity <- seller does exercise equityCid Transfer with newOwner = buyer
+          return{transferredCash;transferredEquity}

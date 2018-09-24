@@ -1,0 +1,8 @@
+daml 1.0
+
+module LibraryModule where
+
+import Main.Rent
+import Main.Equity
+import Main.Cash
+import Main.Trade

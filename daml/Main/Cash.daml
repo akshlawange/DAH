@@ -1,0 +1,26 @@
+daml 1.0
+
+module Main.Cash where
+
+template Cash
+  with
+    cashIssuer:Party
+    cashOwner:Party
+    currency:Text
+    amount:Decimal
+
+  where
+    signatory cashIssuer
+    ensure amount > 0.0
+
+    controller cashOwner can
+      Transfer with newCashOwner:Party
+        returning ContractId Cash
+        to create this with cashOwner=newCashOwner
+
+      Split with splitAmount:Decimal
+        returning {sCash:ContractId Cash;rCash:ContractId Cash}
+        to do
+          s <- create this with amount = splitAmount
+          r <- create this with amount = amount - splitAmount
+          return{sCash = s;rCash = r}

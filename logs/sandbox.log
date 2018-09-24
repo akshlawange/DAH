@@ -1,0 +1,6 @@
+
+2018-09-24 11:39:27.65 [INFO]   [Core-Sandbox]  []  [DA.Cli.Sandbox:128] 
+Starting core-sandbox at http://127.0.0.1:7601/
+
+2018-09-24 11:39:27.65 [INFO]   [Core-Sandbox]  []  [DA.Cli.Sandbox:130] 
+Platform API swagger UI at http://127.0.0.1:7601/v0/swagger-ui

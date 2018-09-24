@@ -1,0 +1,47 @@
+daml 1.0
+
+module Main.Roles where
+
+import Main.Cash 
+
+
+template OperatorRole
+  with
+    operator:Party
+  where 
+    signatory operator
+
+    controller operator can
+      anytime
+        OnboardCashIssuer with cashIssuer:Party
+        returning ContractId CashIssuerInvitation
+        to create CashIssuerInvitation with operator; cashIssuer
+
+template CashIssuerInvitation 
+  with 
+    operator:Party
+    cashIssuer:Party
+  where 
+    signatory operator
+
+    controller cashIssuer can
+      Accept 
+        returning ContractId CashIssuerRole
+        to create CashIssuerRole with operator;cashIssuer
+
+template CashIssuerRole
+  with 
+    cashIssuer:Party
+    operator:Party
+  where 
+    signatory cashIssuer,operator
+
+    controller cashIssuer can 
+      anytime 
+        IssueCash with cashOwner:Party;currency:Text;amount:Decimal
+        returning ContractId Cash
+        to create Cash with cashIssuer = cashIssuer;cashOwner;currency;amount
+
+--write equity issuer role 
+
+  

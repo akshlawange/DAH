@@ -1,0 +1,34 @@
+daml 1.0
+module Main.Equity where
+
+template Equity 
+  with
+    issuer:Party
+    owner:Party
+    symbol:Text
+    quantity:Integer
+  where
+    signatory issuer
+
+    controller owner can
+      Transfer with newOwner:Party
+        returning ContractId Equity
+        to do                                 --another way of create/multiple creates
+          create this with owner = newOwner
+
+      Split with splitQuantity:Integer
+        returning {split:ContractId Equity; rem:ContractId Equity}
+        to do 
+          split <- create this with quantity = splitQuantity
+          rem <- create this with quantity = quantity - splitQuantity
+          return {split;rem}      --it can be also written as return{split=split;rem=rem}
+      
+      -- PartialTransfer with newOwnr: Party; splitQty:Integer
+      --   returning {transferred: ContractId Equity; rem: ContractId Equity}
+      --   to do 
+      --     s <- create this with quantity = splitQty; owner = newOwnr
+      --     r <- create this with quantity = quantity - splitQty
+      --     return{transferred = s;rem = r}
+      
+
+    

@@ -1,0 +1,45 @@
+daml 1.0
+module Test.Scenarios where
+
+import Main.Rent
+import Main.Equity
+import Main.Cash
+
+test rentalTest = scenario
+  
+  let landlord = 'Hrishi'
+  let tenant = 'Shalabh'
+
+  proposalCid <- landlord commits create RentProposal with landlord; tenant; terms = "XYZ"
+  agreementCid <- tenant commits exercise proposalCid Accept 
+
+  tenant commits
+    agreementData <- fetch agreementCid
+    assert (agreementData.terms == "XYZ")
+
+  assert True
+
+test equityTest = scenario 
+
+  let owner = 'ABC'
+  let issuer = 'XYZ'
+  let newOwner = 'PQR'
+
+  eCid <- issuer commits create Equity with owner;issuer;quantity = 10000;symbol = "xyz"
+  -- owner commits exercise eCid Transfer with newOwner
+  resultCid <- owner commits exercise eCid Split with splitQuantity = 5000
+  owner commits exercise resultCid.split Transfer with newOwner
+
+test cashTest = scenario
+
+  let cashOwner = 'ABC'
+  let cashIssuer = 'XYZ'
+  let newCashOwner = 'PQR'
+
+  cCid <- cashIssuer commits create Cash with cashOwner;cashIssuer;amount=500000.00;currency="INR"
+  -- cashOwner commits exercise cCid Transfer with newCashOwner
+  resultCCid <- cashOwner commits exercise cCid Split with splitAmount = 250000.0
+  cashOwner commits exercise resultCCid.sCash Transfer with newCashOwner
+
+--Write Scenarios for Trade
+-- Write scenarios for Roles

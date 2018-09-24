@@ -1,0 +1,48 @@
+daml 1.0
+module Main.Rent where 
+
+def multiply (a:Integer) (b:Integer) = a * b
+
+def result = multiply 2 3
+
+-- DAML executes function as it is however it takes one parameter 
+-- and creates a new function which multiplies with 2
+def double = multiply 2 
+
+def result2 = double 3
+
+template RentAgreement
+  with
+    landlord: Party
+    tenant: Party
+    terms: Text
+  where
+    signatory tenant,landlord
+
+template RentProposal
+  with 
+    landlord: Party
+    tenant: Party
+    terms: Text
+  where
+    signatory landlord
+    -- observer regulator
+    
+    controller tenant can
+      Accept
+        returning  ContractId RentAgreement
+        to create RentAgreement with landlord;tenant;terms
+      Reject
+        returning {}
+        to return {}
+    controller landlord can 
+      Revoke 
+        returning {}
+        to return {}
+
+-- type ContractIdRentAgreement = ContractId RentAgreement -- creates a new contractid with ContractId function
+
+-- observer regulator = controller regulator can
+--                        Dummy
+--                          assert False
+    

@@ -1,0 +1,9 @@
+project:
+  sdk-version: '0.7.11'
+  #scenario: Test.Scenarios
+  name: DAH_Training
+  source: daml/Main/LibraryModule.daml
+  parties:
+  - Scrooge_McDuck
+  - Betina_Beakley
+version: 2
